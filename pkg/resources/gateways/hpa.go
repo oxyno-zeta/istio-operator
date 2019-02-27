@@ -18,7 +18,6 @@ package gateways
 
 import (
 	"github.com/banzaicloud/istio-operator/pkg/resources/templates"
-	"github.com/banzaicloud/istio-operator/pkg/util"
 	autoscalev2beta1 "k8s.io/api/autoscaling/v2beta1"
 	"k8s.io/apimachinery/pkg/runtime"
 )
@@ -28,7 +27,7 @@ func (r *Reconciler) horizontalPodAutoscaler(gw string) runtime.Object {
 		ObjectMeta: templates.ObjectMeta(hpaName(gw), nil, r.Config),
 		Spec: autoscalev2beta1.HorizontalPodAutoscalerSpec{
 			MaxReplicas: r.Config.Spec.Gateways.MaxReplicas,
-			MinReplicas: util.IntPointer(r.Config.Spec.Gateways.MinReplicas),
+			MinReplicas: &r.Config.Spec.Gateways.MinReplicas,
 			ScaleTargetRef: autoscalev2beta1.CrossVersionObjectReference{
 				Name:       gatewayName(gw),
 				Kind:       "Deployment",

@@ -19,7 +19,6 @@ package k8sutil
 import (
 	"reflect"
 
-	"github.com/banzaicloud/istio-operator/pkg/k8sutil/objectmatch"
 	"github.com/go-logr/logr"
 	"github.com/goph/emperror"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
@@ -29,6 +28,8 @@ import (
 	"k8s.io/client-go/dynamic"
 
 	istiov1beta1 "github.com/banzaicloud/istio-operator/pkg/apis/istio/v1beta1"
+	"github.com/banzaicloud/istio-operator/pkg/k8sutil/objectmatch"
+	"github.com/banzaicloud/istio-operator/pkg/util"
 )
 
 type DesiredState string
@@ -111,10 +112,12 @@ func (d *DynamicObject) unstructured() *unstructured.Unstructured {
 	})
 	u.SetOwnerReferences([]metav1.OwnerReference{
 		{
-			APIVersion: d.Owner.APIVersion,
-			Kind:       d.Owner.Kind,
-			Name:       d.Owner.Name,
-			UID:        d.Owner.UID,
+			APIVersion:         d.Owner.APIVersion,
+			Kind:               d.Owner.Kind,
+			Name:               d.Owner.Name,
+			UID:                d.Owner.UID,
+			Controller:         util.BoolPointer(true),
+			BlockOwnerDeletion: util.BoolPointer(true),
 		},
 	})
 	return u
